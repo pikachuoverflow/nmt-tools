@@ -7,7 +7,13 @@ import enum
 
 field_names = [
     'File Name', 'Java Heap', 'Class', 'Thread', 'Code', 'GC', 'Compiler', 'Internal', 'Symbol',
-    'Native Memory Tracking', 'Arena Chunk', 'Unknown', 'Total'
+    'Native Memory Tracking', 'Arena Chunk',
+    'Other',
+    'Metaspace',
+    'Shared class space',
+    'String Deduplication',
+    'Object Monitors',
+    'Total'
 ]
 
 
@@ -33,6 +39,8 @@ def parse_file(file_name, mode):
     results = dict()
     with open(file_name, 'r') as f:
         for line in f:
+            if len(line.strip("\n")) == 0:
+                continue
             for field_name in field_names:
                 parse_line(line, mode, field_name, results)
     results['File Name'] = file_name
@@ -51,7 +59,7 @@ def main(files, mode):
     for file in files:
         for file_name in glob.glob(file):
             results = parse_file(file_name, mode)
-            print(';'.join(normalize(results[key]) for key in field_names))
+            print('|'.join(normalize(results[key]) for key in field_names))
 
 
 class Mode(enum.Enum):
